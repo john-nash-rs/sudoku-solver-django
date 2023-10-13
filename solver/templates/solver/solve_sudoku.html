@@ -1,0 +1,67 @@
+<!-- solver/templates/solver/solve_sudoku.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sudoku Solver</title>
+    <style>
+        .sudoku-grid {
+            display: grid;
+            grid-template-columns: repeat(9, 1fr);
+            gap: 1px;
+            width: 300px;
+        }
+        .sudoku-input {
+            width: 100%;
+            height: 100%;
+            font-size: 20px;
+            text-align: center;
+        }
+        .solve-button {
+            margin-top: 10px;
+            padding: 10px 20px;
+        }
+        .solved-sudoku-table {
+            border-collapse: collapse;
+            width: 300px;
+        }
+        .solved-sudoku-cell {
+            width: 33px;
+            height: 33px;
+            font-size: 20px;
+            text-align: center;
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <h1>Sudoku Solver</h1>
+    <form method="post">
+        {% csrf_token %}
+        <div class="sudoku-grid">
+            {% for field in sudoku_fields %}
+                {{ field }}
+            {% endfor %}
+        </div>
+    
+        {% if not solved_sudoku_values %}
+            <button type="submit" class="solve-button">Solve</button>
+        {% endif %}
+       
+    </form>
+    {% if solved_sudoku_values %}
+    <h2>Solved Sudoku</h2>
+    <table class="solved-sudoku-table">
+        {% for row_num in "012345678" %}
+            <tr>
+                {% for col_num in "012345678" %}
+                    <td class="solved-sudoku-cell">
+                        {{ solved_sudoku_values.pop.data }}
+                    </td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    </table>
+    {% endif %}
+</body>
+</html>
