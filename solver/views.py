@@ -1,6 +1,34 @@
 from django.shortcuts import render
 from .forms import SudokuForm
 
+def is_valid_sudoku(board):
+    def is_valid_move(board, row, col, num):
+        # Check if 'num' is not in the current row or column
+        for i in range(9):
+            if board[row][i] == num or board[i][col] == num:
+                return False
+
+        # Check if 'num' is not in the current 3x3 subgrid
+        start_row, start_col = 3 * (row // 3), 3 * (col // 3)
+        for i in range(3):
+            for j in range(3):
+                if board[i + start_row][j + start_col] == num:
+                    return False
+
+        return True
+
+    for row in range(9):
+        for col in range(9):
+            if board[row][col] != 0:
+                num = board[row][col]
+                board[row][col] = 0  # Temporarily empty the cell for validation
+                if not is_valid_move(board, row, col, num):
+                    return False
+                board[row][col] = num  # Restore the cell value
+
+    return True
+
+
 def is_valid_move(board, row, col, num):
     # Check if 'num' is not in the current row or column
     for i in range(9):
@@ -55,6 +83,12 @@ def solve_sudoku(request):
         # Call the solve_sudoku function to solve the puzzle
         print (board)
         print ("board")
+        if not is_valid_sudoku(board):
+            print("Not valid")
+            sudoku_fields = [SudokuForm(prefix=str(i)) for i in range(81)]
+            return render(request, 'solver/solve_sudoku.html', {'sudoku_fields': sudoku_fields,'error_message': 'Invalid Sudoku puzzle input'})
+            # return render(request, 'solver/solve_sudoku.html', {'error_message': 'Invalid Sudoku puzzle input'})
+
         solved_sudoku = solve_sudoku(board)
         print (board)
 

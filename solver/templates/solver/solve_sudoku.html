@@ -76,6 +76,11 @@
             color: #fff;
         }
 
+        .error-message {
+            color: #E74C3C; /* Red error message color */
+            margin-top: 10px;
+        }
+
         .made-at {
             color: #3498DB; /* Light blue text color */
             margin-top: 20px;
@@ -92,6 +97,7 @@
                     {{ field }}
                 {% endfor %}
             </div>
+            <p class="error-message" id="error-message">{{ error_message }}</p> <!-- Error message element -->
             {% if not solved_sudoku_values %}
                 <button type="submit" class="solve-button">Solve</button>
             {% endif %}
@@ -118,16 +124,20 @@
     function validateInput() {
         // Get all input elements with class "sudoku-input"
         var inputElements = document.querySelectorAll('.sudoku-input');
+        var errorMessage = document.getElementById('error-message'); // Get the error message element
         
         for (var i = 0; i < inputElements.length; i++) {
             var inputValue = inputElements[i].value;
             
             // Check if the input is not empty and contains non-numeric characters
             if (inputValue !== '' && (isNaN(inputValue) || inputValue < 1 || inputValue > 9)) {
-                alert('Please enter valid numbers from 1 to 9 in filled cells.');
+                errorMessage.innerText = 'Please enter valid numbers from 1 to 9 in filled cells.'; // Set the error message
                 return false;
             }
         }
+        
+        // Clear the error message if there are no errors
+        errorMessage.innerText = '';
         
         // If all filled inputs are valid, return true to submit the form
         return true;
