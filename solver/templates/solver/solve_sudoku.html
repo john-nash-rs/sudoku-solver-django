@@ -1,57 +1,104 @@
-<!-- solver/templates/solver/solve_sudoku.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Sudoku Solver</title>
     <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #2C3E50; /* Dark blue-gray background */
+            color: #fff;
+            text-align: center;
+        }
+
+        h1 {
+            margin: 20px 0;
+            color: #3498DB; /* Light blue heading */
+        }
+
+        .sudoku-container {
+            width: 300px;
+            margin: 0 auto;
+        }
+
         .sudoku-grid {
             display: grid;
             grid-template-columns: repeat(9, 1fr);
             gap: 1px;
-            width: 300px;
+            width: 100%;
+            margin: 0 auto;
         }
+
         .sudoku-input {
             width: 100%;
             height: 100%;
             font-size: 20px;
             text-align: center;
+            border: 1px solid #3498DB; /* Light blue border */
+            background-color: #EAECEE; /* Light gray background */
+            box-sizing: border-box;
+            color: #333; /* Dark gray text color */
         }
+
         .solve-button {
-            margin-top: 10px;
+            margin-top: 20px;
             padding: 10px 20px;
+            background-color: #E74C3C; /* Red solve button */
+            color: #fff;
+            border: none;
+            cursor: pointer;
         }
+
+        .solve-button:hover {
+            background-color: #C0392B; /* Darker red on hover */
+        }
+
         .solved-sudoku-table {
             border-collapse: collapse;
             width: 300px;
+            margin: 20px auto;
         }
+
         .solved-sudoku-cell {
             width: 33px;
             height: 33px;
             font-size: 20px;
             text-align: center;
-            border: 1px solid black;
+            border: 1px solid #3498DB; /* Light blue border */
+            background-color: #EAECEE; /* Light gray background */
+            color: #333; /* Dark gray text color */
+            cursor: pointer;
+            transition: background-color 0.2s, color 0.2s;
+        }
+
+        .solved-sudoku-cell:hover {
+            background-color: #3498DB; /* Light blue on hover */
+            color: #fff;
+        }
+
+        .made-at {
+            color: #3498DB; /* Light blue text color */
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
     <h1>Sudoku Solver</h1>
-    <form method="post">
-        {% csrf_token %}
-        <div class="sudoku-grid">
-            {% for field in sudoku_fields %}
-                {{ field }}
-            {% endfor %}
-        </div>
-    
-        {% if not solved_sudoku_values %}
-            <button type="submit" class="solve-button">Solve</button>
-        {% endif %}
-       
-    </form>
-    {% if solved_sudoku_values %}
-    <h2>Solved Sudoku</h2>
-    <table class="solved-sudoku-table">
+    <div class="sudoku-container">
+        <form method="post" onsubmit="return validateInput()">
+            {% csrf_token %}
+            <div class="sudoku-grid">
+                {% for field in sudoku_fields %}
+                    {{ field }}
+                {% endfor %}
+            </div>
+            {% if not solved_sudoku_values %}
+                <button type="submit" class="solve-button">Solve</button>
+            {% endif %}
+        </form>
+        {% if solved_sudoku_values %}
+        <h2>Solved Sudoku</h2>
+        <table class="solved-sudoku-table">
         {% for row_num in "012345678" %}
             <tr>
                 {% for col_num in "012345678" %}
@@ -61,7 +108,30 @@
                 {% endfor %}
             </tr>
         {% endfor %}
-    </table>
+        </table>
+        <p class="made-at">Proudly made at skillcaptain.app ❤️ </p>
     {% endif %}
+    </div>
 </body>
+
+<script>
+    function validateInput() {
+        // Get all input elements with class "sudoku-input"
+        var inputElements = document.querySelectorAll('.sudoku-input');
+        
+        for (var i = 0; i < inputElements.length; i++) {
+            var inputValue = inputElements[i].value;
+            
+            // Check if the input is not empty and contains non-numeric characters
+            if (inputValue !== '' && (isNaN(inputValue) || inputValue < 1 || inputValue > 9)) {
+                alert('Please enter valid numbers from 1 to 9 in filled cells.');
+                return false;
+            }
+        }
+        
+        // If all filled inputs are valid, return true to submit the form
+        return true;
+    }
+</script>
+
 </html>
